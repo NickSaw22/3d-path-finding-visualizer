@@ -5,6 +5,7 @@ import { Canvas } from 'react-three-fiber';
 import Floor from './Floor';
 import Controls from './Controls'; 
 import { Button, Select, MenuItem } from '@material-ui/core'
+import { Grid as Container} from '@material-ui/core'
 import BorderClearIcon from '@material-ui/icons/BorderClear';
 import TerrainIcon from '@material-ui/icons/Terrain';
 import UndoIcon from '@material-ui/icons/Undo';
@@ -56,13 +57,14 @@ function World(props) {
     root: {
       '& > *': {
         //margin: theme.spacing(1),
-        background: '#1E88E5',
+        background: '#1E88E5', 
+        // background: '#364d61',
         border: 0,
         borderRadius: 3,
         color: 'white',
         width: '150px',
         height: '44px',
-        'margin-left': '10px',
+        'margin-left': '20px',
         'font-family': 'inherit',
         'font-weight': 600,
         'font-style': 'normal',
@@ -179,7 +181,7 @@ function finishedOptimalPolicy(){
         <>
         <div className = "header" align = "center" >
             <div className={classes.root}>
-                <Select name = "algorithms" id = "algorithms" displayEmpty onChange={e => handleOnChange(e)}>
+                <Select variant="outlined" name = "algorithms" id = "algorithms" displayEmpty onChange={e => handleOnChange(e)}>
                     <MenuItem>Select Algorithm</MenuItem>
                     <MenuItem value = "Dijkstra">Dijkstra's Algorithm</MenuItem>
                     <MenuItem value = "aStar">A* Search</MenuItem>
@@ -197,8 +199,8 @@ function finishedOptimalPolicy(){
                 </Select>
             </div>
             <div className = "header_items">
-                <AwesomeButtonProgress 
-                    type = "secondary"
+                <AwesomeButtonProgress AwesomeButtonProgress 
+                    type = "primary"
                     size = "medium"
                     disabled = {runState || selected_algo_is_undefined}
                     loadingLabel = "Visualizing..."
@@ -269,6 +271,9 @@ function finishedOptimalPolicy(){
             <MenuItem value = "25">Medium</MenuItem>
             <MenuItem value = "80">Slow</MenuItem>
         </Select>
+
+
+
         </div>
        
         </div>
