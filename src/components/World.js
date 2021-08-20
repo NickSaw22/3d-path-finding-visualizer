@@ -181,7 +181,6 @@ function finishedOptimalPolicy(){
             <div className={classes.root}>
                 <Select name = "algorithms" id = "algorithms" displayEmpty onChange={e => handleOnChange(e)}>
                     <MenuItem>Select Algorithm</MenuItem>
-                    <MenuItem value = "qLearning">Q-Learning</MenuItem>
                     <MenuItem value = "Dijkstra">Dijkstra's Algorithm</MenuItem>
                     <MenuItem value = "aStar">A* Search</MenuItem>
                     <MenuItem value = "BFS">Breadth First Search</MenuItem>
@@ -271,18 +270,7 @@ function finishedOptimalPolicy(){
             <MenuItem value = "80">Slow</MenuItem>
         </Select>
         </div>
-        <div className = "header_items">
-        <AwesomeButton 
-            type = "secondary"
-            size = "medium"
-            ripple = {true}
-            action={(element, next) => {
-               resetAgentKnowledge(); 
-            }}
-            >
-            Reset Agent
-        </AwesomeButton>
-        </div>
+       
         </div>
         <Tutorial />
         <Settings  

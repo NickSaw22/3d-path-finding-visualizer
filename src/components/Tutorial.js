@@ -41,43 +41,7 @@ function Tutorial(props) {
               </tbody>
             </table>
             </div>
-            <div className = "info_buttons">
-                <div className = "info_socials" id = "tutorial_button">
-                    <AwesomeButton
-                        type="secondary"
-                        size = "small"
-                    >
-                        Tutorial
-                    </AwesomeButton>
-                </div>
-                <div className = "info_socials" id = "gh_button">
-                    <AwesomeButtonSocial
-                        type="github"
-                        url="https://github.com/zmaqutu/3D-Pathfinding-Visualizer"
-                        size = "small"
-                    >
-                    </AwesomeButtonSocial>
-                </div>
-                <div className = "info_socials" id = "linkedin">
-                    <AwesomeButtonSocial
-                        type="linkedin"
-                        url="https://www.linkedin.com/in/zmaqutu/"
-                        size = "small"
-                    >
-                        LinkedIn
-                    </AwesomeButtonSocial>
-                </div>
-                <div className = "info_socials" id = "buy_me_a_coffee">
-                    <AwesomeButton
-                        type="secondary"
-                        url="https://www.linkedin.com/in/zmaqutu/"
-                        size = "large"
-                    >
-                        About this project
-                    </AwesomeButton>
-                </div>
-                <InfoLogo id = "info_icon"/>
-            </div>
+            
         </div>
     )
 }
