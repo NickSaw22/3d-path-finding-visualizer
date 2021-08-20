@@ -273,12 +273,12 @@ function finishedOptimalPolicy(){
        
         </div>
         <Tutorial />
-        <Settings  
+        {/* <Settings  
             startTraining = {startTraining}
             configureSettings = {configureSettings}
             updateAgentCuriosity = {updateAgentCuriosity}
             visualizePolicy = {visualizePolicy}
-        />
+        /> */}
         <Canvas colorManagement 
         camera={
             {
