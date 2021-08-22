@@ -5,7 +5,6 @@ import { Canvas } from 'react-three-fiber';
 import Floor from './Floor';
 import Controls from './Controls'; 
 import { Button, Select, MenuItem } from '@material-ui/core'
-import { Grid as Container} from '@material-ui/core'
 import BorderClearIcon from '@material-ui/icons/BorderClear';
 import TerrainIcon from '@material-ui/icons/Terrain';
 import UndoIcon from '@material-ui/icons/Undo';
@@ -28,16 +27,13 @@ function World(props) {
    const [runState, setRunState] = useState(false);                     //when runState is true the visualizer algorithm is running
    const [resetCamera, setResetCamera] = useState(false);               //when resetCamera is true we reset the camera position
    const [clearWalls, setClearWalls] = useState(false);
-   const [agentTrained, setAgentTrained] = useState(false);
    const [clearPath, setClearPath] = useState(false);
-   const [trainAgent, setTrainAgent] = useState(false);
-   const [agentKnowledge, setAgentKnowledge] = useState("");
    const cameraPosition = useRef([0,375,0]);
    const [selectedMazeAlgorithm, setSelectedMazeAlgorithm] = useState("");
    const [algorithmSpeed, setAlgorithmSpeed] = useState("15");
    const [selected_algo_is_undefined, setAlgo] = useState(true);
 
-   const [policyCuriosity , setPolicyCuriosity] = useState(0.8);
+
    
    
    const [applyingSettings, setApplyingSettings] = useState(false);
@@ -57,14 +53,13 @@ function World(props) {
     root: {
       '& > *': {
         //margin: theme.spacing(1),
-        background: '#1E88E5', 
-        // background: '#364d61',
+        background: '#1E88E5',
         border: 0,
         borderRadius: 3,
         color: 'white',
         width: '150px',
         height: '44px',
-        'margin-left': '20px',
+        'margin-left': '10px',
         'font-family': 'inherit',
         'font-weight': 600,
         'font-style': 'normal',
@@ -85,41 +80,11 @@ function World(props) {
    function stopClearWalls(){
        setClearWalls(false);
    }
-   function startTraining(){
-       setTrainAgent(true);
-   }
-   function stopTraining(){
-       setTrainAgent(false);
-   }
-   function resetAgentKnowledge(){
-       setAgentKnowledge("clearMemory")
-   }
-   function agentResetDone(){
-       setAgentKnowledge("");
-   }
-   function configureSettings(userEpochs,userStartRow,userStartCol,userFinishRow,userFinishCol,userLearningRate,userAgentCuriosity){
-       setConfig({
-           epochs: Number(userEpochs),
-           startRow: Number(userStartRow),
-           startCol: Number(userStartCol),
-           finishRow: Number(userFinishRow),
-           finishCol: Number(userFinishCol),
-           learningRate: Number(userLearningRate),
-           agentCuriosity: Number(userAgentCuriosity),
-
-       });
-       setApplyingSettings(true)
-       
-   }
+ 
    function finishApplyingSettings(){
        setApplyingSettings(false);
    }
-   function visualizePolicy(){
-    setVisualizeOptimalPolicy(true);
-}
-function updateAgentCuriosity(agentQ){
-    setPolicyCuriosity(agentQ)
-}
+
 function finishedOptimalPolicy(){
     setVisualizeOptimalPolicy(false);
 }
@@ -134,13 +99,6 @@ function finishedOptimalPolicy(){
            setSelectedAlgorithm({
                algorithm: "Dijkstra",
                type: "weighted", 
-               heuristic: "",
-           });
-       }
-       else if (event.target.value === "qLearning"){
-           setSelectedAlgorithm({
-               algorithm: "Q-Learning",
-               type: "machine-learning",
                heuristic: "",
            });
        }
@@ -181,14 +139,12 @@ function finishedOptimalPolicy(){
         <>
         <div className = "header" align = "center" >
             <div className={classes.root}>
-                <Select variant="outlined" name = "algorithms" id = "algorithms" displayEmpty onChange={e => handleOnChange(e)}>
+                <Select name = "algorithms" id = "algorithms" displayEmpty onChange={e => handleOnChange(e)}>
                     <MenuItem>Select Algorithm</MenuItem>
                     <MenuItem value = "Dijkstra">Dijkstra's Algorithm</MenuItem>
                     <MenuItem value = "aStar">A* Search</MenuItem>
                     <MenuItem value = "BFS">Breadth First Search</MenuItem>
                     <MenuItem value = "DFS">Depth First Search</MenuItem>
-                    
-
                 </Select>
             </div>
             <div className={classes.root}>
@@ -199,8 +155,8 @@ function finishedOptimalPolicy(){
                 </Select>
             </div>
             <div className = "header_items">
-                <AwesomeButtonProgress AwesomeButtonProgress 
-                    type = "primary"
+                <AwesomeButtonProgress 
+                    type = "secondary"
                     size = "medium"
                     disabled = {runState || selected_algo_is_undefined}
                     loadingLabel = "Visualizing..."
@@ -271,19 +227,12 @@ function finishedOptimalPolicy(){
             <MenuItem value = "25">Medium</MenuItem>
             <MenuItem value = "80">Slow</MenuItem>
         </Select>
-
-
-
         </div>
        
         </div>
         <Tutorial />
-        {/* <Settings  
-            startTraining = {startTraining}
-            configureSettings = {configureSettings}
-            updateAgentCuriosity = {updateAgentCuriosity}
-            visualizePolicy = {visualizePolicy}
-        /> */}
+        <Settings  
+        />
         <Canvas colorManagement 
         camera={
             {
@@ -318,20 +267,13 @@ function finishedOptimalPolicy(){
             stopClearPath = {stopClearPath}
             stopClearWalls = {stopClearWalls}
             stopMazeSelection = {stopMazeSelection}
-            stopTraining = {stopTraining}
-            agentResetDone = {agentResetDone}
             finishApplyingSettings = {finishApplyingSettings}
             visualizeOptimalPolicy = {visualizeOptimalPolicy}
-            policyCuriosity = {policyCuriosity}
             finishedOptimalPolicy = {finishedOptimalPolicy}
             resetStatus = {resetCamera}
-            agentKnowledge = {agentKnowledge}
             selectedAlgorithm = {selectedAlgorithm}
             selectedMazeAlgorithm = {selectedMazeAlgorithm}
             algorithmSpeed = {algorithmSpeed} 
-            //epochs = {settingsConfig.epochs}
-            //learningRate = {settingsConfig.learningRate}
-            //agentCuriosity = {settingsConfig.agentCuriosity}
             applyingSettings = {applyingSettings}
             settingsConfig = {settingsConfig}
             worldProperties = {
@@ -341,7 +283,6 @@ function finishedOptimalPolicy(){
                 runState: runState,
                 clearPath: clearPath,
                 clearWalls: clearWalls,
-                trainAgent: trainAgent,
                 start: {
                     row: settingsConfig.startRow,
                     col: settingsConfig.startCol,
