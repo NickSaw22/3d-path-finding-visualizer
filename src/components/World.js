@@ -1,14 +1,10 @@
 import React, { useState, useRef } from 'react';
 import Grid from './Grid';
-import Mars from './Mars';
 import { Canvas } from 'react-three-fiber';
 import Floor from './Floor';
 import Controls from './Controls'; 
-import { Button, Select, MenuItem } from '@material-ui/core'
-import BorderClearIcon from '@material-ui/icons/BorderClear';
-import TerrainIcon from '@material-ui/icons/Terrain';
-import UndoIcon from '@material-ui/icons/Undo';
-import { spacing } from '@material-ui/system';
+import {  Select, MenuItem } from '@material-ui/core'
+
 import { makeStyles } from '@material-ui/core/styles';
 import Tutorial from './Tutorial';
 import Settings from './Settings';
