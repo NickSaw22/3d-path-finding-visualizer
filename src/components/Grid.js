@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
-import img from './floor_texture.jpg';
+import img from './textures/floor_texture.jpg';
+import grass from './textures/grass_texture.jpg'
+import road from './textures/road_texture.jpg'
 import { tweenToColor, getNodesInShortestPathOrder } from './algorithms/helpers'
 import TWEEN from '@tweenjs/tween.js';
 import { weightedSearchAlgorithm } from "./algorithms/weightedSearchAlgorithm.js";
 import { unweightedSearchAlgorithm } from "./algorithms/unweightedSearchAlgorithm.js";
 import { randomMaze, recursiveDivisionMaze } from './algorithms/mazeAlgorithms';
 import { useThree } from 'react-three-fiber';
-import * as tf from '@tensorflow/tfjs';
-import { math } from '@tensorflow/tfjs';
+
 
 
 
@@ -32,11 +33,10 @@ function Grid(props) {
   const selectedAlgorithm = props.selectedAlgorithm;
   const selectedMazeAlgorithm = props.selectedMazeAlgorithm;
   const runState = props.worldProperties.runState;
-  const trainTheAgent = props.worldProperties.trainAgent;
   const clearTheWalls = props.worldProperties.clearWalls; //rename this variable
   const clearThePath = props.worldProperties.clearPath; // rename this variable too
   const algorithmSpeed = props.algorithmSpeed;
-  const agentKnowledge = props.agentKnowledge;
+
   const applyingSettings = props.applyingSettings;
 
   const visualizeThePolicy = props.visualizeOptimalPolicy;
@@ -65,28 +65,14 @@ function Grid(props) {
     /*if( props.applyingSettings=== true){
       resetTerrainConfig();
     }*/
-    if(props.agentKnowledge ==="clearMemory"){
-      terrain.records = [];
-      terrain.q_table = Array(props.worldProperties.rows).fill().map(() => Array(props.worldProperties.cols).fill(0));
-      //clearPath();
-      props.agentResetDone();
-    }
     if(props.worldProperties.runState === true){
-      if(props.selectedAlgorithm.type === "machine-learning"){
-        animateQlearning()
-      }
-      else{
       visualizeAlgorithm();
-      }
     }
     else if(props.worldProperties.clearWalls === true){
       clearWalls();
     }
     else if(props.worldProperties.clearPath === true){
       clearPath();
-    }
-    else if(props.worldProperties.trainAgent === true){
-      qLearning();
     }
     else if(props.selectedMazeAlgorithm === "randomMaze"){
       clearPath();
@@ -110,12 +96,11 @@ function Grid(props) {
 
          animateMaze(nodesToAnimate, "wall", 30)
     }
-    //const algorithmSpeed = props.algorithmSpeed;
-    //console.log(algorithmSpeed);
-  }, [runState, clearTheWalls, clearThePath, selectedMazeAlgorithm, trainTheAgent,agentKnowledge,]);
+    console.log(algorithmSpeed);
+  }, [runState, clearTheWalls, clearThePath, selectedMazeAlgorithm]);
 
 
-  const loader = useMemo(() => new THREE.TextureLoader().load(img,
+  const loader = useMemo(() => new THREE.TextureLoader().load(road ,
     function(texture){
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
@@ -128,7 +113,7 @@ function Grid(props) {
         });
         groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
 				groundMesh.receiveShadow = true;
-    }), [img]);
+    }), [road ]);
 
     
     
@@ -423,35 +408,7 @@ function Grid(props) {
     //console.log(terrain.grid[5][5]);
   }
 
-  function animateQlearning(){
-    clearPath();
-    let minimum = -10;
-    let maximum = 100;
-    for(let i = 0; i < terrain.records.length;i++){
-      //let record = terrain.records[i]
-      if(i > 1300){return;}
-      for(let row = 0; row < 30; row++){
-        for(let col = 0; col < 30; col++){ 
-          const node = terrain.grid[row][col];
-          if(terrain.records[i][row][col] === 0 || node.status === "wall" || node.status === "start" || node.status === "finish"){continue;}
-          let ratio = 2 * (terrain.records[i][row][col]-minimum) / (maximum - minimum)
-          let blue = Number(Math.max(0, 255*(1 - ratio)))
-          let red = Number(Math.max(0, 255*(ratio - 1)))
-          let green = 255 - blue - red
 
-          red /= 255;
-          green /= 255;
-          blue /= 255;
-          
-          setTimeout(() => {
-            tweenToColor(node, groundGeometry, [{r: red, g: green, b: blue}], 30,{position: false});
-            //if (row === 30 - 1) {}
-          }, 1000);
-        }
-      }
-    }
-    props.updateRunState(false);
-  }
   function animateOptimalPolicy(){
     for(let i = 2; i < terrain.optimalPolicy.length;i++){
       let headRow = terrain.optimalPolicy[i][0];
@@ -484,69 +441,8 @@ function Grid(props) {
 
     }
   }
-  function qLearning(){
-    //reset records
-    if(props.settingsConfig.epochs > 0){
-      terrain.records = [];
-    }
-    let i = 0;
-    while(i < props.settingsConfig.epochs){
-     if(terrain.records.length > 1300){break;}
-      if(i > 0.6*props.settingsConfig.epochs){
-        let y = props.settingsConfig.startRow;
-        let x = props.settingsConfig.startCol;
-        var currentState = [y,x]; 
-      }
-      else{
-        var currentState = terrain.states[Math.floor(Math.random() * terrain.states.length)]
-
-      }
-      while(!(currentState[0] === props.settingsConfig.finishRow && currentState[1] === props.settingsConfig.finishCol)
-        && terrain.grid[currentState[0]][currentState[1]].status !== "wall"){
-        
-          //setTimeout(() => {
-           //tweenToColor(terrain.grid[14][14],groundGeometry,[{ r: 1, g: 0.64, b: 0.0}]);
-          //}, props.algorithmSpeed);
-          
-          
-          //let action = chooseAction(currentState, Math.abs(1- (i/props.settingsConfig.epochs)))
-          let action = chooseAction(currentState, props.settingsConfig.agentCuriosity)
-          if(i > 0.9*props.settingsConfig.epochs){
-             action = chooseAction(currentState, 0.4) 
-          }
-          let action_dy = terrain.actions[action][0]
-				  let action_dx = terrain.actions[action][1]
-				  let nextState = [action_dy + currentState[0], action_dx + currentState[1]]
 
 
-          let currentQValue = terrain.q_table[currentState[0]][currentState[1]]
-				  //let maximum_action = chooseAction(currentState, 0)//might need to be nextstate
-				
-          //action_dy = terrain.actions[maximum_action][0]
-				  //action_dx = terrain.actions[maximum_action][1]
-
-				  let maxState = [action_dy + currentState[0], action_dx + currentState[1]];
-				  let maxQValue = terrain.q_table[maxState[0]][maxState[1]]
-
-          let temporal_difference = (terrain.grid[nextState[0]][nextState[1]].reward + terrain.discountFactor *(maxQValue - currentQValue)  ); 
-				  
-          //let learning_rate = 1 / (1 + terrain.grid[currentState[0]][currentState[1]].visits)
-
-          let q_value = currentQValue + (props.settingsConfig.learningRate * (temporal_difference));
-				  terrain.q_table[currentState[0]][currentState[1]] = parseFloat(q_value.toFixed(2));
-
-          terrain.grid[currentState[0]][currentState[1]].visits+=1;
-          currentState = nextState;
-          i++;
-
-        }
-        terrain.records.push(getRecord())
-    }
-    props.stopTraining();
-    //console.log(props.settingsConfig.epochs);
-    console.log(terrain.records)
-    //console.log(terrain.grid)
-  }
   function chooseAction(currentState,e_greedy){
     var rwc = require("random-weighted-choice");
     let actionOptions = [
