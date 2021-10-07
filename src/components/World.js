@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Grid from './Grid';
+//import Box from './Box';
 import Mars from './Mars';
 import { Canvas } from 'react-three-fiber';
 import Floor from './Floor';
@@ -369,7 +370,7 @@ function finishedOptimalPolicy(){
             resetStatus = {resetCamera}
             updateResetStatus = {updateResetStatus}
         />
-       
+        
       </Canvas>
       </>
     )
